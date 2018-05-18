@@ -1,0 +1,36 @@
+
+@Override
+	public void tick(int verb) {
+		if (!brainMode.isSelected() || verb != DOWN) {
+			super.tick(verb);
+			return;
+		}
+		if (lastCount != count) {
+			board.undo();
+			lastCount = count;
+			move = brain.bestMove(board, currentPiece, HEIGHT, null);
+		}
+		if (move == null) {
+			super.tick(verb);
+			return;
+		}
+		if (!move.piece.equals(currentPiece)) {
+			currentPiece = currentPiece.fastRotation();
+		}
+		if (move.x > currentX) {
+			currentX++;
+		}
+		if (move.x < currentX) {
+			currentX--;
+		}
+		if (currentX == move.x && move.piece.equals(currentPiece) && activateFalling.isSelected()) {
+			/*int y = board.dropHeight(currentPiece, currentX);
+			currentY = y;
+			return;*/
+			super.tick(DROP);
+			super.tick(DOWN);
+		}
+		else{
+			super.tick(verb);
+		}
+	}
